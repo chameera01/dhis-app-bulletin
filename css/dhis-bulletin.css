@@ -1,0 +1,15 @@
+.dbItem {
+
+}
+
+.inline {
+    display: inline-block;
+    width: 410px;
+    height: 275px;
+//    margin: 10px;
+//    border: 30px solid #73AD21;
+}
+
+.hidden{
+    display:none;
+}
