@@ -1,0 +1,21 @@
+{
+    "version": "1.0",
+    "name": "UPHMIS Bulletin App",
+    "description": "DHIS2 Bulletin App",
+    "launch_path": "index.html",
+    "icons": {
+        "16": "/img/icons/mortar-16.png",
+        "48": "img/bulletin.png",
+        "128": "/img/icons/mortar-128.png"
+    },
+    "developer": {
+        "name": "HISP India",
+        "url": "http://www.hispindia.org"
+    },
+    "default_locale": "en",
+    "activities": {
+        "dhis": {
+            "href": ".."
+        }
+    }
+}

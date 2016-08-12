@@ -1,15 +1,48 @@
-.dbItem {
+body {
+    background-color: lightgray;
+}
 
+.page {
+    width: 29.7cm;
+    height: 21cm;
+    margin: 0 auto;
+    padding: 50px;
+    border: 1px dotted black;
+    background-color: white;
+    overflow:hidden;
+
+}
+
+.dbItemDiv {
+    #width: 410px;
+    #height: 275px;
+    min-width: 410px;
+    min-height: 275px;
+
+    margin: 2px;
+
+    border: 1px groove gray;
+    border-radius: 5px;
+
+    #position: relative;
 }
 
 .inline {
     display: inline-block;
-    width: 410px;
-    height: 275px;
-//    margin: 10px;
-//    border: 30px solid #73AD21;
 }
 
 .hidden{
     display:none;
+}
+
+.page-title {
+
+    text-align: center;
+}
+
+@media print {
+    .page {overflow: hidden;
+            #page-break-after: always;
+
+    }
 }
