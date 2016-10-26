@@ -136,6 +136,13 @@ var generateDBItem = function(pageNo,itemNo,DBItem){
 				'<img src="'+ baseURL +'api/charts/'+itemID+'/data?width=410&height=275" alt="db item">' +
 				'</div>';
 			break;
+		case "map":
+			var itemID = DBItem.map.id;
+			var itemName = DBItem.map.name;
+			DBItemContent = '<div id="dbItem-'+pageNo+'-'+itemNo+'" class="dbItemDiv inline">' +
+				'<img src="'+ baseURL +'api/maps/'+itemID+'/data?width=410&height=275" alt="'+itemName+'">' +
+				'</div>';
+			break;
 		default:
 			DBItemContent = "invalid item";
 	}
@@ -175,6 +182,9 @@ var getDBItemType = function(item){
 			break;
 		case "chart":
 			type = "chart";
+			break;
+		case "map":
+			type = "map";
 			break;
 		default:
 		type = "invalid";
