@@ -40,6 +40,10 @@ body {
     text-align: center;
 }
 
+.moveable {
+    position: relative;
+}
+
 @media print {
     .page {overflow: hidden;
             #page-break-after: always;

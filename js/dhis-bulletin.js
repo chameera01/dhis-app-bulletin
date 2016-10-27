@@ -95,7 +95,7 @@ var generateDBPage = function(pageNo,DB){
 		DBPageContent += generateDBItem(pageNo,index,DBItem);
 	});
 
-	DBPageContent += '<div class="inline moveable">'+
+	DBPageContent += '<div id="textarea'+pageNo+'" class="inline moveable" draggable="true">'+
 						'<textarea rows="4" cols="50">'+
 							'this is a text area template...'+
 						'</textarea>'+
@@ -125,22 +125,23 @@ var generateDBItem = function(pageNo,itemNo,DBItem){
 	switch(itemType) {
 		case "reportTable":
 			var itemID = DBItem.reportTable.id;
-			DBItemContent = '<div id="dbItem-'+pageNo+'-'+itemNo+'" class="dbItemDiv inline">' +
+			DBItemContent = '<div id="dbItem-'+pageNo+'-'+itemNo+'" class="dbItemDiv inline moveable" draggable="true">' +
 				'</div>';
 
 			bulletin.pivotTables.push({tableID:""+itemID+"",elementID:"dbItem-"+pageNo+"-"+itemNo+""});
 			break;
 		case "chart":
 			var itemID = DBItem.chart.id;
-			DBItemContent = '<div id="dbItem-'+pageNo+'-'+itemNo+'" class="dbItemDiv inline">' +
-				'<img src="'+ baseURL +'api/charts/'+itemID+'/data?width=410&height=275" alt="db item">' +
+			var itemName = DBItem.chart.name;
+			DBItemContent = '<div id="dbItem-'+pageNo+'-'+itemNo+'" class="dbItemDiv inline moveable" draggable="true">' +
+				'<img src="'+ baseURL +'api/charts/'+itemID+'/data?width=410&height=275" alt="'+itemName+'" draggable="false">' +
 				'</div>';
 			break;
 		case "map":
 			var itemID = DBItem.map.id;
 			var itemName = DBItem.map.name;
-			DBItemContent = '<div id="dbItem-'+pageNo+'-'+itemNo+'" class="dbItemDiv inline">' +
-				'<img src="'+ baseURL +'api/maps/'+itemID+'/data?width=410&height=275" alt="'+itemName+'">' +
+			DBItemContent = '<div id="dbItem-'+pageNo+'-'+itemNo+'" class="dbItemDiv inline moveable" draggable="true"">' +
+				'<img src="'+ baseURL +'api/maps/'+itemID+'/data?width=410&height=275" alt="'+itemName+'" draggable="false">' +
 				'</div>';
 			break;
 		default:
@@ -327,6 +328,27 @@ var printBulletin = function(){
 	displayPage(bulletin.pageIDs[bulletin.currentPage]);
 };
 
+/* following three functions are used to make items moveable */
+function drag_start(event) {
+	var style = window.getComputedStyle(event.target, null);
+	event.dataTransfer.setData("application/x-moz-node", (parseInt(style.getPropertyValue("left"), 10) - event.clientX) + ',' + (parseInt(style.getPropertyValue("top"), 10) - event.clientY) + ',' + event.target.getAttribute('id'));
+}
+
+function drag_over(event) {
+	event.preventDefault();
+	return false;
+}
+
+function drop(event) {
+	var offset = event.dataTransfer.getData("application/x-moz-node").split(',');
+
+	var mv = document.getElementsByClassName('moveable');
+	mv[offset[2]].style.left = (event.clientX + parseInt(offset[0], 10)) + 'px';
+	mv[offset[2]].style.top = (event.clientY + parseInt(offset[1], 10)) + 'px';
+	event.preventDefault();
+	return false;
+}
+
 /*
  * dont use for now
  * @param tableID
@@ -344,6 +366,9 @@ var resizeTable = function(tableID,width,height){
 	//tableID.prevObject[0].clientHeight = 400;
 };
 
+/*
+ * starting point of the app
+ */
 $(document).ready(function(){
 
 	var def = $.Deferred();
@@ -353,6 +378,15 @@ $(document).ready(function(){
 	promise = promise.then(function(){
 		console.log(bulletin.DBs);
 		generateDBPages(bulletin.DBs);
+
+		/* following code block make items moveable */
+		var mv = document.getElementsByClassName('moveable');
+		for (var i = 0; i < mv.length; i++) {
+			mv[i].addEventListener('dragstart', drag_start, true);
+		}
+		document.body.addEventListener('dragover', drag_over, false);
+		document.body.addEventListener('drop', drop, false);
+
 	});
 
 	def.resolve();
@@ -363,34 +397,4 @@ $(document).ready(function(){
 
 
 
-/* following code is used for drag and drop feature */
-function drag_start(event) {
-	var style = window.getComputedStyle(event.target, null);
-	event.dataTransfer.setData("application/x-moz-node", (parseInt(style.getPropertyValue("left"), 10) - event.clientX) + ',' + (parseInt(style.getPropertyValue("top"), 10) - event.clientY) + ',' + event.target.getAttribute('data-item'));
-//console.log(event.DataTransfer.mozItemCount );
-}
 
-function drag_over(event) {
-//console.log(event.DataTransfer.mozItemCount );
-	event.preventDefault();
-	return false;
-}
-
-function drop(event) {
-//console.log(event.DataTransfer.mozItemCount );
-	var offset = event.dataTransfer.getData("application/x-moz-node").split(',');
-	var mv = document.getElementsByClassName('moveable');
-	mv[parseInt(offset[2])].style.left = (event.clientX + parseInt(offset[0], 10)) + 'px';
-	mv[parseInt(offset[2])].style.top = (event.clientY + parseInt(offset[1], 10)) + 'px';
-	event.preventDefault();
-	return false;
-}
-
-/*
- var mv = document.getElementsByClassName('moveable');
- console.log("hello..*.");
- for (var i = 0; i < mv.length; i++) {
- mv[i].addEventListener('dragstart', drag_start, false);
- document.body.addEventListener('dragover', drag_over, false);
- document.body.addEventListener('drop', drop, false);
- }*/
