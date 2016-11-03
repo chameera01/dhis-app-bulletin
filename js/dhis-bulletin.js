@@ -155,7 +155,7 @@ var generateDBPages = function(DBs){
 		DBPagesContent += generateDBPage(index,DB);
 	});
 
-	document.getElementById("dhisBulletin").innerHTML = DBPagesContent;
+	document.getElementById("page-container").innerHTML = DBPagesContent;
 
 	generatePivotTables();
 
@@ -380,7 +380,7 @@ var isPageIgnored = function(pageIndex){
  * @param pageID - bulletin.pageIDs[i]
  * @param pageName - downloaded file gets this name
  */
-var downloadPage = function(pageID,pageName){
+var downloadPage = function(){
 
 /*	var myBlob = new Blob( [document.getElementById('dhisBulletin').outerHTML] , {type: 'image/png'});
 	var url = window.URL.createObjectURL(myBlob);
@@ -413,7 +413,10 @@ var downloadPage = function(pageID,pageName){
 		//setTimeout(function() {window.URL.revokeObjectURL(url);},0);
 	});*/
 
-	displayPage(pageID);
+	var pageID = bulletin.pageIDs[bulletin.currentPage];
+	var pageName = "bulletin-page-" +(bulletin.currentPage+1);
+
+	//displayPage(pageID);
 
 	html2canvas($("#"+pageID+""),
 		{
@@ -427,7 +430,7 @@ var downloadPage = function(pageID,pageName){
 			}
 		});
 
-	displayPage(bulletin.pageIDs[bulletin.currentPage]);
+	//displayPage(bulletin.pageIDs[bulletin.currentPage]);
 
 };
 
@@ -517,7 +520,16 @@ $(document).ready(function(){
 	promise = promise.then(loadDBsInfo);
 	promise = promise.then(function(){
 		console.log(bulletin.DBs);
+
+
+
 		generateDBPages(bulletin.DBs);
+
+		/* make selected content editable*/
+		var editableElements = document.getElementsByClassName("contentEditable");
+		for (i = 0; i < editableElements.length; i++) {
+			editableElements[i].contentEditable = true;
+		}
 
 		/* following code block make items moveable */
 		var mv = document.getElementsByClassName('moveable');
