@@ -44,6 +44,40 @@ body {
     position: relative;
 }
 
+
+.text-center {
+    text-align:center;
+}
+.front-page *{
+    margin-top:6px;
+    margin-bottom:6px;
+}
+
+
+#frontPage-2 *{
+    margin-top:0px;
+    margin-bottom:0px;
+}
+#content-table, #content-table th, #content-table td {
+    border: 1px solid black;
+    border-collapse: collapse;
+}
+#content-table th, #content-table td {
+    padding: 5px;
+}
+#content-table .page-name-row {
+    background-color: powderblue;
+    font-weight: bold;
+}
+
+
+.ignored {
+    background-color: #ffffff;
+    border: 1px solid black;
+    opacity: 0.5;
+    filter: alpha(opacity=60); /* For IE8 and earlier */
+}
+
 @media print {
     .page {overflow: hidden;
             #page-break-after: always;

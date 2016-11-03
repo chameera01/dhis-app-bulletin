@@ -73,6 +73,84 @@ var generateDBPages = function(DBs){
 		'</nav>'
 		'';
 
+	/* front pages 1 */
+	DBPagesContent += '<div id="frontPage-1" class="page front-page">'+
+					'<section class="center" style="position:relative;top:40px;">'+
+					'<div class="text-center">'+
+					'<img class="" src="img/nrhm-logo.png" alt="NRHM Logo" height="200" width="200">'+
+					'</div>'+
+					'</section>'+
+					'<section class="center" style="position:relative;top:50px;">'+
+					'<div class="text-center">'+
+					'<h1 style="color:purple;font-size:300%;" class="contentEditable"> HMIS Bulletin - Varanasi </h1>'+
+					'<p class="contentEditable">Volume - 1, FY 2016-17 (October-December)</p>'+
+					'<p style="color:red;font-size:200%;" class="contentEditable">National Health Mission</p>'+
+					'<p class="contentEditable">Government of Uttar Pradesh</p>'+
+					'</div>'+
+					'</section>'+
+					'<section style="position:relative;top:240px;">'+
+					'<div class="text-center">'+
+					'<p>*************</p>'+
+					'<p>Prepared By : MIS Division</p>'+
+					'<p>State Program Management Unit, Uttar Pradesh.</p>'+
+					'</div>'+
+					'</section>'+
+					'</div>';
+
+	bulletin.pageIDs.push("frontPage-1");
+
+	/* table of content page */
+	DBPagesContent += '<div id="frontPage-2" class="page">'+
+					'<section class="center" style="position:relative;top:50px;">'+
+					'<div class="text-center">'+
+					'<p style="color:red;font-size:200%;" class="contentEditable">HMIS</p>'+
+					'<p style="color:green;font-size:200%;" class="contentEditable">Varanasi - Uttar Pradesh</p>'+
+					'<p style="color:purple;font-size:200%;" class="contentEditable">April-October-2016</p>'+
+					'</div>'+
+					'</section>'+
+					'<section style="position:relative;top:70px;">'+
+					'<div class="">'+
+					'<table id="content-table" style="width:60%;" align="center">'+
+					'<tr style="background-color:#99ffbb;">'+
+					'<th>S.No</th>'+
+					'<th>Services</th>'+
+					'</tr>'+
+					'<tr class="page-name-row">'+
+					'<td class="text-center">1</td>'+
+					'<td>Maternal Health</td>'+
+					'</tr>'+
+					'<tr><td class="text-center">1.1</td><td>Antenatal care</td></tr>'+
+					'<tr><td class="text-center">1.2</td><td>Delivery & Postnatal care</td></tr>'+
+					'<tr><td class="text-center">1.3</td><td>Pregnancy complications</td></tr>'+
+					'<tr class="page-name-row">'+
+					'<td class="text-center">2</td>'+
+					'<td>Child Health</td>'+
+					'</tr>'+
+					'<tr><td class="text-center">2.1</td><td>Live Births, New Born Care</td></tr>'+
+					'<tr><td class="text-center">2.2</td><td>Child Immunization</td></tr>'+
+					'<tr class="page-name-row">'+
+					'<td class="text-center">3</td>'+
+					'<td>Reproductive Health</td>'+
+					'</tr>'+
+					'<tr><td class="text-center">3.1</td><td>Family Planning</td></tr>'+
+					'<tr class="page-name-row">'+
+					'<td class="text-center">4</td>'+
+					'<td>Overall gaps</td>'+
+					'</tr>'+
+					'<tr><td class="text-center">4.1</td><td>ANC care, Child care and Immunization</td></tr>'+
+					'<tr class="page-name-row">'+
+					'<td class="text-center">5</td>'+
+					'<td>Estimations</td>'+
+					'</tr>'+
+					'<tr><td class="text-center">5.1</td><td>ANC, Delivery, Immunization</td></tr>'+
+					'<tr><td class="text-center">5.1</td><td>Family Planning</td></tr>'+
+					'</table>'+
+					'</div>'+
+					'</section>'+
+					'</div>';
+
+	bulletin.pageIDs.push("frontPage-2");
+
 	$.each(DBs, function (index, DB) {
 		DBPagesContent += generateDBPage(index,DB);
 	});
