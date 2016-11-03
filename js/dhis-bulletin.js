@@ -7,6 +7,11 @@ bulletin.DBs = {};
 /* contain all page IDs in an order*/
 bulletin.pageIDs = [];
 
+/* contain indexes of pages in bulletin.pageIDs
+ * which are ignored from downloading or printing
+ */
+bulletin.pagesIgnored = [];
+
 /* contain index of current page in bulletin.pageIDs */
 bulletin.currentPage = -1;
 
@@ -234,11 +239,18 @@ var navigatePages = function(direction){
 		return false;
 	}
 
+	/* check ignore radio buttons */
+	if(isPageIgnored(newPage))
+		$('input:radio[name=ignorePage]')[0].checked = true;
+	else
+		$('input:radio[name=ignorePage]')[1].checked = true;
+
+
 	displayPage(bulletin.pageIDs[newPage]);
 	window.location.hash="page-"+(newPage+1);
 	bulletin.currentPage = newPage;
 
-	/* following conditions are related to navigation UI component used */
+	/* following conditions are related to navigation UI component */
 	if(bulletin.pageIDs.length <= newPage+1)
 		$("#nextBtn").addClass("disabled");
 	else
@@ -250,6 +262,39 @@ var navigatePages = function(direction){
 		$("#preBtn").removeClass("disabled");
 
 	return false;
+};
+
+/*
+ * bulletin.currentPage will be added to bulletin.pagesIgnored array
+ */
+var ignorePage = function () {
+	bulletin.pagesIgnored.push(bulletin.currentPage);
+	var pageID = bulletin.pageIDs[bulletin.currentPage];
+	$("#"+pageID+"").addClass("ignored");
+};
+
+/*
+ * bulletin.currentPage will be removed from bulletin.pagesIgnored array
+ */
+var activatePage = function () {
+	var index = bulletin.pagesIgnored.indexOf(bulletin.currentPage);
+	bulletin.pagesIgnored.splice(index,1);
+	var pageID = bulletin.pageIDs[bulletin.currentPage];
+	$("#"+pageID+"").removeClass("ignored");
+};
+
+/*
+ * check whether a page is ignored or not
+ * @param pageIndex - index of particular page in bulletin.pageIDs
+ * return true if page is ignored
+ */
+var isPageIgnored = function(pageIndex){
+	var pageIgnored = false;
+	$.each(bulletin.pagesIgnored, function (index, ignoredPageIndex) {
+		if(pageIndex==ignoredPageIndex)
+			pageIgnored = true;
+	});
+	return pageIgnored;
 };
 
 /*
@@ -312,17 +357,26 @@ var downloadPage = function(pageID,pageName){
  * download all pages
  */
 var downloadBulletin = function(){
-
 	$.each(bulletin.pageIDs, function (index, pageID) {
-		var pageName = "bulletin-page-"+(index+1);
-		downloadPage(pageID,pageName);
+		if(!isPageIgnored(index)){
+			var pageName = "bulletin-page-" +(index+1);
+			downloadPage(pageID,pageName);
+		}
 	});
-
 };
 
+/*
+ * first remove hidden class from all pages
+ * then add hidden class only for ignored pages
+ * call window.print() method
+ */
 var printBulletin = function(){
 
 	$(".page").removeClass("hidden");
+	$.each(bulletin.pagesIgnored, function (index, ignoredPageIndex) {
+		var pageID = bulletin.pageIDs[ignoredPageIndex];
+		$("#"+pageID+"").addClass("hidden");
+	});
 	window.print();
 
 	displayPage(bulletin.pageIDs[bulletin.currentPage]);
@@ -386,6 +440,16 @@ $(document).ready(function(){
 		}
 		document.body.addEventListener('dragover', drag_over, false);
 		document.body.addEventListener('drop', drop, false);
+
+		/* change event for ignore page radio buttons */
+		$('input[type=radio][name=ignorePage]').change(function() {
+			if (this.value == 'yes') {
+				ignorePage();
+			}
+			else if (this.value == 'no') {
+				activatePage();
+			}
+		});
 
 	});
 
