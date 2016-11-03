@@ -70,7 +70,7 @@ var generateDBPages = function(DBs){
 		'<li id="preBtn" class="previous" onclick="return navigatePages(-1);"><a href="#"><span aria-hidden="true">&larr;</span> previous</a></li>'+
 		'<li id="nextBtn" class="next" onclick="return navigatePages(+1);"><a href="#">Next <span aria-hidden="true">&rarr;</span></a></li>'+
 		'</ul>'+
-		'</nav>'
+		'</nav>'+
 		'';
 
 	/* front pages 1 */
@@ -460,17 +460,25 @@ var printBulletin = function(){
 	displayPage(bulletin.pageIDs[bulletin.currentPage]);
 };
 
-/* following three functions are used to make items moveable */
+/*
+ * used to make items moveable
+ */
 function drag_start(event) {
 	var style = window.getComputedStyle(event.target, null);
 	event.dataTransfer.setData("application/x-moz-node", (parseInt(style.getPropertyValue("left"), 10) - event.clientX) + ',' + (parseInt(style.getPropertyValue("top"), 10) - event.clientY) + ',' + event.target.getAttribute('id'));
 }
 
+/*
+ * used to make items moveable
+ */
 function drag_over(event) {
 	event.preventDefault();
 	return false;
 }
 
+/*
+ * used to make items moveable
+ */
 function drop(event) {
 	var offset = event.dataTransfer.getData("application/x-moz-node").split(',');
 

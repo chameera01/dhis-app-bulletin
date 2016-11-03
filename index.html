@@ -67,11 +67,18 @@
         </div>
 
         <!-- actual bulletin -->
-        <div id="dhisBulletin"></div>
+        <div id="dhisBulletin">
+            <div id="page-container"></div>
 
-    <button onclick="downloadPage('dbPage-4','page-4')">download page</button>
-    <button onclick="downloadBulletin()">download bulletin</button>
-    <button onclick="printBulletin()">print bulletin</button>
+            <button onclick="downloadPage()">download page</button>
+            <button onclick="downloadBulletin()">download bulletin</button>
+            <button onclick="printBulletin()">print bulletin</button>
+            <div>
+                ignore this page ?
+                <input type="radio" name="ignorePage" value="yes">Yes</input>
+                <input type="radio" name="ignorePage" value="no">No</input>
+            </div>
+        </div>
 
     </body>
 </html>
