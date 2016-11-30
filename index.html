@@ -70,9 +70,20 @@
         <div id="dhisBulletin">
             <div id="page-container"></div>
 
-            <button onclick="downloadPage()">download page</button>
-            <button onclick="downloadBulletin()">download bulletin</button>
-            <button onclick="printBulletin()">print bulletin</button>
+            <!-- settings dialog -->
+            <div id="settings-form" title="Bulletin Settings">
+                <form>
+                    <fieldset>
+                        <label for="districtNameStng">District : </label>
+                        <input type="text" name="districtNameStng" id="districtNameStng" value="Varanasi" class="text ui-widget-content ui-corner-all">
+                        <br>
+                        <label for="volumeStng">Volume : </label>
+                        <input type="number" name="volumeStng" id="volumeStng" value="1" class="number ui-widget-content ui-corner-all">
+                    </fieldset>
+                </form>
+            </div>
+
+            <!-- ignore page buttons -->
             <div>
                 ignore this page ?
                 <input type="radio" name="ignorePage" value="yes">Yes</input>

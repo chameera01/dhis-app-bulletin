@@ -4,7 +4,7 @@ var baseURL = "http://hospdev.hispindia.org/uphmis_testing/";
 /* contain all DBs and DB item details */
 bulletin.DBs = {};
 
-/* contain all page IDs in an order*/
+/* contain all page IDs in an order */
 bulletin.pageIDs = [];
 
 /* contain indexes of pages in bulletin.pageIDs
@@ -17,9 +17,14 @@ bulletin.currentPage = -1;
 
 /*  an array of objects {tableID,elementID}
  *  contain all pivot table's ID and element ID
- *  have to use this approach bcz pivot tables are generated using dhis2 plugin */
+ *  have to use this approach bcz pivot tables are generated using dhis2 plugin
+ */
 bulletin.pivotTables = [];
 
+/* global attribute of bulletin */
+bulletin.districtName = "Varanasi";
+bulletin.volume = 1;
+bulletin.timePeriod = {strMonth:"April",endMonth:"June",strYr:2016,endYr:2017};
 
 var callAPI = function( url, filter ){
 	var def = $.Deferred();
@@ -67,8 +72,14 @@ var generateDBPages = function(DBs){
 	/* navigation UI component */
 	DBPagesContent += '<nav aria-label="...">'+
 		'<ul class="pager">'+
-		'<li id="preBtn" class="previous" onclick="return navigatePages(-1);"><a href="#"><span aria-hidden="true">&larr;</span> previous</a></li>'+
-		'<li id="nextBtn" class="next" onclick="return navigatePages(+1);"><a href="#">Next <span aria-hidden="true">&rarr;</span></a></li>'+
+		'<li id="preBtn" class="previous" onclick="return navigatePagesByDir(-1);"><a href="#"><span aria-hidden="true">&larr;</span> previous</a></li>'+
+
+		'<li class="" onclick="downloadPage(bulletin.currentPage)"><a href="#downloadPage">download page</a></li>'+
+		'<li class="" onclick="downloadBulletin()"><a href="#downloadBulletin">download bulletin</a></li>'+
+		'<li class="" onclick="printBulletin()"><a href="#printBulletin">print bulletin</a></li>'+
+		'<li id="settingsBtn" class=""><a href="#settings">settings</a></li>'+
+
+		'<li id="nextBtn" class="next" onclick="return navigatePagesByDir(+1);"><a href="#">Next <span aria-hidden="true">&rarr;</span></a></li>'+
 		'</ul>'+
 		'</nav>'+
 		'';
@@ -82,10 +93,10 @@ var generateDBPages = function(DBs){
 					'</section>'+
 					'<section class="center" style="position:relative;top:50px;">'+
 					'<div class="text-center">'+
-					'<h1 style="color:purple;font-size:300%;" class="contentEditable"> HMIS Bulletin - Varanasi </h1>'+
-					'<p class="contentEditable">Volume - 1, FY 2016-17 (October-December)</p>'+
-					'<p style="color:red;font-size:200%;" class="contentEditable">National Health Mission</p>'+
-					'<p class="contentEditable">Government of Uttar Pradesh</p>'+
+					'<h1 style="color:purple;font-size:300%;"> HMIS Bulletin - <span class="districtName">Varanasi</span></h1>'+
+					'<p>Volume - <span class="volume">1</span>, FY '+bulletin.timePeriod.strYr+'/'+bulletin.timePeriod.endYr+' ('+bulletin.timePeriod.strMonth+'-'+bulletin.timePeriod.endMonth+')</p>'+
+					'<p style="color:red;font-size:200%;">National Health Mission</p>'+
+					'<p>Government of Uttar Pradesh</p>'+
 					'</div>'+
 					'</section>'+
 					'<section style="position:relative;top:240px;">'+
@@ -103,48 +114,39 @@ var generateDBPages = function(DBs){
 	DBPagesContent += '<div id="frontPage-2" class="page">'+
 					'<section class="center" style="position:relative;top:50px;">'+
 					'<div class="text-center">'+
-					'<p style="color:red;font-size:200%;" class="contentEditable">HMIS</p>'+
-					'<p style="color:green;font-size:200%;" class="contentEditable">Varanasi - Uttar Pradesh</p>'+
-					'<p style="color:purple;font-size:200%;" class="contentEditable">April-October-2016</p>'+
+					'<p style="color:red;font-size:200%;">HMIS</p>'+
+					'<p style="color:green;font-size:200%;"><span class="districtName">Varanasi</span> - Uttar Pradesh</p>'+
+					'<p style="color:purple;font-size:200%;">'+bulletin.timePeriod.strMonth+'-'+bulletin.timePeriod.endMonth+' '+bulletin.timePeriod.strYr+'/'+bulletin.timePeriod.endYr+'</p>'+
 					'</div>'+
 					'</section>'+
 					'<section style="position:relative;top:70px;">'+
-					'<div class="">'+
-					'<table id="content-table" style="width:60%;" align="center">'+
-					'<tr style="background-color:#99ffbb;">'+
-					'<th>S.No</th>'+
-					'<th>Services</th>'+
-					'</tr>'+
-					'<tr class="page-name-row">'+
-					'<td class="text-center">1</td>'+
-					'<td>Maternal Health</td>'+
-					'</tr>'+
-					'<tr><td class="text-center">1.1</td><td>Antenatal care</td></tr>'+
-					'<tr><td class="text-center">1.2</td><td>Delivery & Postnatal care</td></tr>'+
-					'<tr><td class="text-center">1.3</td><td>Pregnancy complications</td></tr>'+
-					'<tr class="page-name-row">'+
-					'<td class="text-center">2</td>'+
-					'<td>Child Health</td>'+
-					'</tr>'+
-					'<tr><td class="text-center">2.1</td><td>Live Births, New Born Care</td></tr>'+
-					'<tr><td class="text-center">2.2</td><td>Child Immunization</td></tr>'+
-					'<tr class="page-name-row">'+
-					'<td class="text-center">3</td>'+
-					'<td>Reproductive Health</td>'+
-					'</tr>'+
-					'<tr><td class="text-center">3.1</td><td>Family Planning</td></tr>'+
-					'<tr class="page-name-row">'+
-					'<td class="text-center">4</td>'+
-					'<td>Overall gaps</td>'+
-					'</tr>'+
-					'<tr><td class="text-center">4.1</td><td>ANC care, Child care and Immunization</td></tr>'+
-					'<tr class="page-name-row">'+
-					'<td class="text-center">5</td>'+
-					'<td>Estimations</td>'+
-					'</tr>'+
-					'<tr><td class="text-center">5.1</td><td>ANC, Delivery, Immunization</td></tr>'+
-					'<tr><td class="text-center">5.1</td><td>Family Planning</td></tr>'+
-					'</table>'+
+					'<div id="tableOfContentDiv" class="">'+
+
+						'<table id="content-table" style="width:60%;" align="center">'+
+						'<tr style="background-color:#99ffbb;">'+
+						'<th>S.No</th>'+
+						'<th>Services</th>'+
+						'</tr>'+
+
+						'<tr class="page-name-row">'+
+						'<td class="text-center">1</td>'+
+						'<td onclick="return navigatePagesByID(&#39;dbPage-5&#39;);"><a>Maternal Health</a></td>'+
+						'</tr>'+
+
+						'<tr><td class="text-center">1.1</td><td>Antenatal care</td></tr>'+
+						'<tr><td class="text-center">1.2</td><td>Delivery & Postnatal care</td></tr>'+
+						'<tr><td class="text-center">1.3</td><td>Pregnancy complications</td></tr>'+
+
+						'<tr class="page-name-row">'+
+						'<td class="text-center">2</td>'+
+						'<td onclick="return navigatePagesByID(&#39;dbPage-3&#39;);"><a>Child Health</a></td>'+
+						'</tr>'+
+
+						'<tr><td class="text-center">2.1</td><td>Live Births, New Born Care</td></tr>'+
+						'<tr><td class="text-center">2.2</td><td>Child Immunization</td></tr>'+
+
+						'</table>'+
+
 					'</div>'+
 					'</section>'+
 					'</div>';
@@ -159,7 +161,7 @@ var generateDBPages = function(DBs){
 
 	generatePivotTables();
 
-	navigatePages(+1);
+	navigatePagesByDir(+1);
 };
 
 /*
@@ -286,6 +288,56 @@ var getDBItemID = function(DBItem){
 	return DBItem.id;
 };
 
+var generateTableOfContent = function(){
+	var tableOfContentHTML = "";
+
+	tableOfContentHTML += '<table id="content-table" style="width:60%;" align="center">'+
+						'<tr style="background-color:#99ffbb;">'+
+						'<th>S.No</th>'+
+						'<th>Services</th>'+
+						'</tr>';
+	var pageNo = 1;
+	$.each(bulletin.DBs, function (index, DB) {
+		if(!isPageIgnored(index+2)){
+			var pageID = bulletin.pageIDs[index+2];
+			var pageName = DB.displayName;
+
+			tableOfContentHTML += '<tr class="page-name-row">'+
+								'<td class="text-center">'+pageNo+'</td>'+
+								'<td onclick="return navigatePagesByID(&#39;'+pageID+'&#39;);">'+pageName+'</td>'+
+								'</tr>';
+
+			var itemNo = 1;
+			$.each(DB.dashboardItems, function (index, dbItem) {
+				var itemType = getDBItemType(dbItem);
+				var itemName = "";
+
+				switch(itemType) {
+					case "reportTable":
+						itemName = dbItem.reportTable.name;
+						tableOfContentHTML += '<tr><td class="text-center">'+pageNo+'.'+itemNo+'</td><td>'+itemName+'</td></tr>';
+						break;
+					case "chart":
+						itemName = dbItem.chart.name;
+						tableOfContentHTML += '<tr><td class="text-center">'+pageNo+'.'+itemNo+'</td><td>'+itemName+'</td></tr>';
+						break;
+					case "map":
+						itemName = dbItem.map.name;
+						tableOfContentHTML += '<tr><td class="text-center">'+pageNo+'.'+itemNo+'</td><td>'+itemName+'</td></tr>';
+						break;
+				}
+
+				itemNo++;
+			});
+			pageNo++;
+		}
+	});
+
+	tableOfContentHTML += '</table>';
+
+	document.getElementById("tableOfContentDiv").innerHTML = tableOfContentHTML;
+};
+
 /*
  * will hide all other page divs and display only one
  * @param pageID - bulletin.pageIDs[i]
@@ -307,7 +359,53 @@ var displayPage = function(pageID){
  * @param direction - -1 for previous page and +1 for next page
  * @returns {boolean}
  */
-var navigatePages = function(direction){
+var navigatePagesByID = function(pageID){
+
+
+
+	var pageIndex = bulletin.pageIDs.indexOf(pageID);
+
+
+	/* check ignore radio buttons */
+	if(isPageIgnored(pageIndex))
+		$('input:radio[name=ignorePage]')[0].checked = true;
+	else
+		$('input:radio[name=ignorePage]')[1].checked = true;
+
+
+	displayPage(pageID);
+	window.location.hash="page-"+(pageIndex+1);
+	bulletin.currentPage = pageIndex;
+
+	/* following conditions are related to navigation UI component */
+	if(bulletin.pageIDs.length <= pageIndex+1)
+		$("#nextBtn").addClass("disabled");
+	else
+		$("#nextBtn").removeClass("disabled");
+
+	if(pageIndex-1 < 0)
+		$("#preBtn").addClass("disabled");
+	else
+		$("#preBtn").removeClass("disabled");
+
+	return false;
+};
+
+var navigatePagesByDir = function(dir){
+	var newPageIndex = bulletin.currentPage + dir;
+	var newPageID = bulletin.pageIDs[newPageIndex];
+
+	/* this condition can be removed for now */
+	if( newPageIndex < 0 || bulletin.pageIDs.length <= newPageIndex){
+		alert("invalid navigation");
+		return false;
+	}
+
+	navigatePagesByID(newPageID);
+};
+
+/* remove this later */
+var navigatePagesBackup = function(direction){
 
 	var newPage = bulletin.currentPage + direction;
 
@@ -349,6 +447,8 @@ var ignorePage = function () {
 	bulletin.pagesIgnored.push(bulletin.currentPage);
 	var pageID = bulletin.pageIDs[bulletin.currentPage];
 	$("#"+pageID+"").addClass("ignored");
+
+	generateTableOfContent();
 };
 
 /*
@@ -359,6 +459,8 @@ var activatePage = function () {
 	bulletin.pagesIgnored.splice(index,1);
 	var pageID = bulletin.pageIDs[bulletin.currentPage];
 	$("#"+pageID+"").removeClass("ignored");
+
+	generateTableOfContent();
 };
 
 /*
@@ -380,7 +482,7 @@ var isPageIgnored = function(pageIndex){
  * @param pageID - bulletin.pageIDs[i]
  * @param pageName - downloaded file gets this name
  */
-var downloadPage = function(){
+var downloadPage = function(pageIndex){
 
 /*	var myBlob = new Blob( [document.getElementById('dhisBulletin').outerHTML] , {type: 'image/png'});
 	var url = window.URL.createObjectURL(myBlob);
@@ -413,10 +515,10 @@ var downloadPage = function(){
 		//setTimeout(function() {window.URL.revokeObjectURL(url);},0);
 	});*/
 
-	var pageID = bulletin.pageIDs[bulletin.currentPage];
-	var pageName = "bulletin-page-" +(bulletin.currentPage+1);
+	var pageID = bulletin.pageIDs[pageIndex];
+	var pageName = "bulletin-page-" +(pageIndex+1);
 
-	//displayPage(pageID);
+	displayPage(pageID);
 
 	html2canvas($("#"+pageID+""),
 		{
@@ -430,7 +532,7 @@ var downloadPage = function(){
 			}
 		});
 
-	//displayPage(bulletin.pageIDs[bulletin.currentPage]);
+	displayPage(bulletin.pageIDs[bulletin.currentPage]);
 
 };
 
@@ -438,10 +540,10 @@ var downloadPage = function(){
  * download all pages
  */
 var downloadBulletin = function(){
-	$.each(bulletin.pageIDs, function (index, pageID) {
-		if(!isPageIgnored(index)){
-			var pageName = "bulletin-page-" +(index+1);
-			downloadPage(pageID,pageName);
+	$.each(bulletin.pageIDs, function (pageIndex, pageID) {
+		if(!isPageIgnored(pageIndex)){
+			//var pageName = "bulletin-page-" +(index+1);
+			downloadPage(pageIndex);
 		}
 	});
 };
@@ -492,6 +594,72 @@ function drop(event) {
 	return false;
 }
 
+var updateDistrictName = function(districtName){
+	bulletin.districtName = districtName;
+	var districtNameElements = document.getElementsByClassName("districtName");
+	for (var i = 0; i < districtNameElements.length; i++) {
+		districtNameElements[i].innerHTML = bulletin.districtName;
+	}
+};
+
+var calculateTimePeriod = function(){
+	var today = new Date();
+	var thisYr = today.getFullYear();
+
+	/* find quarter
+	 * Apr-Jun = 1
+	 * Jul-Sep = 2
+	 * Oct-Dec = 3
+	 * Jan-Mar = 4
+	 */
+	var q = Math.floor(today.getMonth()/3);
+	var quarter = q < 1 ? 4 : q;
+
+	// set starting and ending months and years
+	switch (quarter){
+		case 1:
+			bulletin.timePeriod.strMonth = "April";
+			bulletin.timePeriod.endMonth = "June";
+			bulletin.timePeriod.strYr = thisYr;
+			bulletin.timePeriod.endYr = thisYr+1;
+			break;
+		case 2:
+			bulletin.timePeriod.strMonth = "July";
+			bulletin.timePeriod.endMonth = "September";
+			bulletin.timePeriod.strYr = thisYr;
+			bulletin.timePeriod.endYr = thisYr+1;
+			break;
+		case 3:
+			bulletin.timePeriod.strMonth = "October";
+			bulletin.timePeriod.endMonth = "December";
+			bulletin.timePeriod.strYr = thisYr;
+			bulletin.timePeriod.endYr = thisYr+1;
+			break;
+		case 4:
+			bulletin.timePeriod.strMonth = "January";
+			bulletin.timePeriod.endMonth = "March";
+			bulletin.timePeriod.strYr = thisYr-1;
+			bulletin.timePeriod.endYr = thisYr;
+			break;
+	}
+};
+
+var updateSettings = function(){
+	// update District name
+	bulletin.districtName = document.getElementById("districtNameStng").value || "Varanasi";
+	var districtNameElements = document.getElementsByClassName("districtName");
+	for (var i = 0; i < districtNameElements.length; i++) {
+		districtNameElements[i].innerHTML = bulletin.districtName;
+	}
+
+	// update Volume
+	bulletin.volume = document.getElementById("volumeStng").value || 1;
+	var volumeElements = document.getElementsByClassName("volume");
+	for (var i = 0; i < volumeElements.length; i++) {
+		volumeElements[i].innerHTML = bulletin.volume;
+	}
+};
+
 /*
  * dont use for now
  * @param tableID
@@ -521,9 +689,12 @@ $(document).ready(function(){
 	promise = promise.then(function(){
 		console.log(bulletin.DBs);
 
-
+		/* find financial year and months */
+		calculateTimePeriod();
 
 		generateDBPages(bulletin.DBs);
+
+		generateTableOfContent();
 
 		/* make selected content editable*/
 		var editableElements = document.getElementsByClassName("contentEditable");
@@ -549,6 +720,30 @@ $(document).ready(function(){
 			}
 		});
 
+		/* initiate settings dialog */
+		var settingsDialog = $( "#settings-form" ).dialog({
+			autoOpen: true,
+			height: 400,
+			width: 350,
+			modal: true,
+			buttons: {
+				"Update": function() {
+					updateSettings();
+					$(this).dialog("close");
+				},
+				Cancel: function() {
+					$(this).dialog("close");
+				}
+			},
+			close: function() {
+				//form[0].reset();
+				//allFields.removeClass( "ui-state-error" );
+			}
+		});
+		/* adding onclick to settings button */
+		$( "#settingsBtn" ).on( "click", function() {
+			settingsDialog.dialog("open");
+		});
 	});
 
 	def.resolve();
