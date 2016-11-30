@@ -79,8 +79,9 @@ body {
 }
 
 @media print {
-    .page {overflow: hidden;
-            #page-break-after: always;
+    .page {
+        overflow: hidden;
+        #page-break-after: always;
 
     }
 }
