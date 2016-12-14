@@ -94,7 +94,7 @@ var generateDBPages = function(DBs){
 					'<section class="center" style="position:relative;top:50px;">'+
 					'<div class="text-center">'+
 					'<h1 style="color:purple;font-size:300%;"> HMIS Bulletin - <span class="districtName">Varanasi</span></h1>'+
-					'<p>Volume - <span class="volume">1</span>, FY '+bulletin.timePeriod.strYr+'/'+bulletin.timePeriod.endYr+' ('+bulletin.timePeriod.strMonth+'-'+bulletin.timePeriod.endMonth+')</p>'+
+					'<p>Volume - <span class="volume">1</span>, FY '+bulletin.timePeriod.strYr+'-'+bulletin.timePeriod.endYr+' ('+bulletin.timePeriod.strMonth+'-'+bulletin.timePeriod.endMonth+')</p>'+
 					'<p style="color:red;font-size:200%;">National Health Mission</p>'+
 					'<p>Government of Uttar Pradesh</p>'+
 					'</div>'+
@@ -112,11 +112,11 @@ var generateDBPages = function(DBs){
 
 	/* table of content page */
 	DBPagesContent += '<div id="frontPage-2" class="page">'+
-					'<section class="center" style="position:relative;top:50px;">'+
+					'<section class="center" style="position:relative;top:10px;">'+
 					'<div class="text-center">'+
-					'<p style="color:red;font-size:200%;">HMIS</p>'+
-					'<p style="color:green;font-size:200%;"><span class="districtName">Varanasi</span> - Uttar Pradesh</p>'+
-					'<p style="color:purple;font-size:200%;">'+bulletin.timePeriod.strMonth+'-'+bulletin.timePeriod.endMonth+' '+bulletin.timePeriod.strYr+'/'+bulletin.timePeriod.endYr+'</p>'+
+					'<p style="color:red;font-size:200%;font-weight:800;">HMIS</p>'+
+					'<p style="color:green;font-size:200%;font-weight:800;"><span class="districtName">Varanasi</span> - Uttar Pradesh</p>'+
+					'<p style="color:purple;font-size:200%;font-weight:800;">'+bulletin.timePeriod.strMonth+'-'+bulletin.timePeriod.endMonth+' '+bulletin.timePeriod.strYr+'-'+bulletin.timePeriod.endYr+'</p>'+
 					'</div>'+
 					'</section>'+
 					'<section style="position:relative;top:70px;">'+
@@ -174,7 +174,12 @@ var generateDBPage = function(pageNo,DB){
 	var DBPageContent = '';
 	DBPageContent += '<div id="dbPage-'+pageNo+'" class="page">';
 
-	DBPageContent += '<div class="page-title"><h4>'+DB.displayName+'</h4></div>';
+	DBPageContent += '<svg width="110%" height="70" style="position:relative;left:-50px;top:-20px">'+
+					'<rect width="110%" height="70" style="fill:rgb(73,124,255)" />'+
+					'<text x="550" y="35" alignment-baseline="central" text-anchor="middle" font-size="35px" fill="white">'+DB.displayName+'</text>'+
+					'</svg>';
+
+	//DBPageContent += '<div class="page-title"><h4>'+DB.displayName+'</h4></div>';
 
 	$.each(DB.dashboardItems, function (index, DBItem) {
 		DBPageContent += generateDBItem(pageNo,index,DBItem);
@@ -182,7 +187,7 @@ var generateDBPage = function(pageNo,DB){
 
 	DBPageContent += '<div id="textarea'+pageNo+'" class="inline moveable" draggable="true">'+
 						'<textarea rows="4" cols="50">'+
-							'this is a text area template...'+
+							'Write your interpretation'+
 						'</textarea>'+
 					'</div>';
 
@@ -230,7 +235,7 @@ var generateDBItem = function(pageNo,itemNo,DBItem){
 				'</div>';
 			break;
 		default:
-			DBItemContent = "invalid item";
+			DBItemContent = "";
 	}
 
 	return DBItemContent;
@@ -513,7 +518,8 @@ var downloadPage = function(pageIndex){
 
 		//adding some delay in removing the dynamically created link solved the problem in FireFox
 		//setTimeout(function() {window.URL.revokeObjectURL(url);},0);
-	});*/
+	});
+*/
 
 	var pageID = bulletin.pageIDs[pageIndex];
 	var pageName = "bulletin-page-" +(pageIndex+1);
@@ -540,6 +546,7 @@ var downloadPage = function(pageIndex){
  * download all pages
  */
 var downloadBulletin = function(){
+
 	$.each(bulletin.pageIDs, function (pageIndex, pageID) {
 		if(!isPageIgnored(pageIndex)){
 			//var pageName = "bulletin-page-" +(index+1);
